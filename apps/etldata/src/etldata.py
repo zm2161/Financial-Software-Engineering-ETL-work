@@ -21,7 +21,7 @@ def main(argv):
 
         # Initialize standard logging \ destination file handlers.
         # TODO: Finish/fix logging below.
-        std_filename = "c:\\temp\\opendata.log"
+        std_filename = "c:\\temp\\etldata.log"
         logging.basicConfig(filename=std_filename, filemode='a', format='%(asctime)s - %(message)s')
         logging.info('')
         logging.info(f'Entering {APP}')
