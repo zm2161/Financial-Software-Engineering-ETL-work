@@ -4,6 +4,11 @@ import logging
 import os
 import sys
 from types import SimpleNamespace as Namespace
+import sys
+#sys.path.append('/Users/mazhuoran/Downloads/6861/fall2022py')
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('etldata.py'))))))
+
+from utils.convert_util import namespace_to_dict
 
 RETURN_SUCCESS = 0
 RETURN_FAILURE = 1
@@ -17,16 +22,19 @@ def main(argv):
 
         # Initialize standard logging \ destination file handlers.
         # TODO: Finish/fix logging below.
-        std_filename = "c:\\temp\\opendata.log"
-        logging.basicConfig(filename=std_filename, filemode='a', format='%(asctime)s - %(message)s')
+        # std_filename = "/Users/mazhuoran/Downloads/6861/fall2022py/opendata.log"
+        std_filename = os.path.join(os.path.dirname(os.path.abspath('etldata.py')),"opendata.log")
+        
+        logging.basicConfig(filename=std_filename, level=logging.INFO,filemode='a', format='%(asctime)s - %(message)s')
         logging.info('')
         logging.info(f'Entering {APP}')
 
         # Preparation step.
         # TODO: Change below initializations to be conversion
         #  from Namespace to dict (args, feature_config).
-        mapping_args = dict()
-        mapping_conf = dict()
+        
+        mapping_args = namespace_to_dict(args)
+        mapping_conf = namespace_to_dict(feature_config)
 
         # Workflow steps.
         if feature_type == 'extraction':
@@ -65,8 +73,9 @@ def _interpret_args(argv):
     process_args = process_arg.rsplit('_', 1)
     process_name = process_args[0]
     feature_type = process_args[1]
+    #process_name is etldata
     current_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-    with open(os.path.join(current_path, f'..\\config\\{process_name}.json')) as file_config:
+    with open(os.path.join(current_path, f'../config/{process_name}.json')) as file_config:
         mapping_config = json.load(file_config, object_hook=lambda d: Namespace(**d))
         if feature_type == 'extraction':
             feature_config = vars(mapping_config.extraction)
@@ -78,8 +87,10 @@ def _interpret_args(argv):
         if feature_args:
             for key, value in feature_args.items():
                 if isinstance(value, Namespace):
+                    #vars function returns a dict
                     value = vars(value)
                 arg_parser.add_argument(key, dest=value['dest'], help=value['help'], required=value['required'])
+    #parse_args return a namespace
     return arg_parser.parse_args(argv), process_name, feature_type, feature_config
 
 
