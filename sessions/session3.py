@@ -74,10 +74,10 @@ def concatenate(list1, list2):
     return: list
         result of index-based concatenation
     """
-    new_list = []
+    a_list = []
     for first_element, second_element in zip(list1, list2):
-        new_list.append(first_element + second_element)
-    return new_list
+        a_list.append(first_element + second_element)
+    return a_list
 
 
 def concatenate_list_of_lists(input_list):
@@ -156,9 +156,9 @@ def deep_copy(input_list):
 
 
 def find(input_dict):
-    # does this need to find all the keys or a specified one? Function sig in ppt doesn't have a key parameter to specify
-    # also, if an outer dict shares a key with an inner dict, do we just create one overall key with its values no
-    # matter the level?
+    # does this need to find all the keys or a specified one? Function sig in ppt doesn't have a key parameter to
+    # specify also, if an outer dict shares a key with an inner dict, do we just create one overall key with its
+    # values no matter the level?
     """ Finds all values by key in tuple format
     param input_dict: dict
         dictionary to traverse
@@ -243,16 +243,16 @@ if __name__ == '__main__':
     test_dict = {2: 'world'}
     test_set = {1, 2, 4}
     test_list = [1, 'string', test_tuple, test_dict, test_set]
-    new_list = deep_copy(test_list)
+    copy_list = deep_copy(test_list)
 
     print(f'test_list looks like: {test_list}')
-    print(f'new_list looks like: {new_list}')
+    print(f'copy_list looks like: {copy_list}')
     print()
-    print(f'my implementation types: {[type(item) for item in new_list]}')
-    print(f'original types: {[type(item) for item in new_list]}')
+    print(f'my implementation types: {[type(item) for item in copy_list]}')
+    print(f'original types: {[type(item) for item in copy_list]}')
 
     for i in range(len(test_list)):
-        print(id(test_list[i]) == id(new_list[i]))
+        print(id(test_list[i]) == id(copy_list[i]))
     print()
 
     print('Testing find')
