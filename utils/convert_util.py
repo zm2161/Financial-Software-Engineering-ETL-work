@@ -12,7 +12,6 @@ def namespace_to_dict(args):
     """
     if isinstance(args,Namespace) or isinstance(args, argparse.Namespace):
         return namespace_to_dict(vars(args))
-
     elif isinstance(args,dict):
         for k,v in args.items():
             args[k]=namespace_to_dict(v)
