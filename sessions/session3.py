@@ -243,16 +243,16 @@ if __name__ == '__main__':
     test_dict = {2: 'world'}
     test_set = {1, 2, 4}
     test_list = [1, 'string', test_tuple, test_dict, test_set]
-    copy_list = deep_copy(test_list)
+    diff_list = deep_copy(test_list)
 
     print(f'test_list looks like: {test_list}')
-    print(f'copy_list looks like: {copy_list}')
+    print(f'copy_list looks like: {diff_list}')
     print()
-    print(f'my implementation types: {[type(item) for item in copy_list]}')
-    print(f'original types: {[type(item) for item in copy_list]}')
+    print(f'my implementation types: {[type(item) for item in diff_list]}')
+    print(f'original types: {[type(item) for item in diff_list]}')
 
     for i in range(len(test_list)):
-        print(id(test_list[i]) == id(copy_list[i]))
+        print(id(test_list[i]) == id(diff_list[i]))
     print()
 
     print('Testing find')
