@@ -28,7 +28,6 @@ def main(argv):
         logging.info(f'Entering {APP}')
 
         #  Convert from Namespace to dict (args, feature_config).
-
         mapping_args = convertu.namespace_to_dict(args)
         mapping_conf = convertu.namespace_to_dict(feature_config)
 
