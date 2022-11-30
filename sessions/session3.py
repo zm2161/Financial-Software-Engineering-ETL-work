@@ -29,6 +29,7 @@ def remove_element(input_tuple, element):
             output=output+(input,)
     return output
 
+
 def check_containment(input_string, lookup_string):
     """
     Checks for substring availability in given string; function returns bool value
@@ -41,6 +42,8 @@ def check_containment(input_string, lookup_string):
     """
     if lookup_string in input_string:return True
     else: return False
+
+
 def reverse(input_string):
     """
     Removes an element from given tuple; function returns resulted tuple
@@ -97,6 +100,7 @@ def remove_element_list(input_list, element):
     except ValueError:
         print("Error: element not in list")
         
+        
 def deep_copy(input_list):
     """
     deep copy of given list
@@ -125,18 +129,13 @@ def find(input_dict,element):
     tuple
     """
     output=()
-    
     for k,v in input_dict.items():
         if k==element:
-            output=output+(k,v),
+            output += (v,)
         if isinstance(v, dict):
-            
-            results=find(v,element)
-            # for result in results:
-            #     print(type(result))
-            #     output=output+(result,)
-        
+            output += find(v,element)      
     return output
+
 
 def min_value(input_dict):
     """
@@ -150,16 +149,16 @@ def min_value(input_dict):
     return min(input_dict,key=input_dict.get)
     
     
-
-print(tuple_types(("Tango", 100.32, 25, True)))
-print(remove_element( (100.32, 25, True),True))
-print(check_containment('I like you', 'youi'))
-print(reverse('cbd'))
-print(concatenate([1,2], [3,4]))
-l = [[1,2], [3,4]]
-print(concatenate_list_of_lists(l))
-print(remove_element_list([1,2,3], 4))
-print(remove_element_list([1,2,3], 3))
-print(deep_copy([1,2,3]))
-print(find({'a':{'a':(1,2)},'b':1,'a':3},'a'))
-print(min_value({'a': 10, 'b': 20, 'c': 5}))
+if __name__ == '__main__':
+    print(tuple_types(("Tango", 100.32, 25, True)))
+    print(remove_element( (100.32, 25, True),True))
+    print(check_containment('I like you', 'youi'))
+    print(reverse('cbd'))
+    print(concatenate([1,2], [3,4]))
+    l = [[1,2], [3,4]]
+    print(concatenate_list_of_lists(l))
+    print(remove_element_list([1,2,3], 4))
+    print(remove_element_list([1,2,3], 3))
+    print(deep_copy([1,2,3]))
+    print(find({'a':{'a':(1,2)},'b':1},'a'))# It outputs ({'a': (1, 2)}, (1, 2))
+    print(min_value({'a': 10, 'b': 20, 'c': 5}))
