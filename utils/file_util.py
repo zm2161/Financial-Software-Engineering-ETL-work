@@ -80,7 +80,6 @@ def write(description, df, rename_col, path, columns_wt, file_type='excel', sepa
             else:
                 logging.error(f'Invalid second input')
                 raise ValueError(f'Second paramenter should be new or overwrite')
-            print(path)
             df.to_csv(path, columns=columns_wt, sep=separator, header=header)
             
         #Write to excel
