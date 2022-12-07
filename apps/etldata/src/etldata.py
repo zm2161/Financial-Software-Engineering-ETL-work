@@ -80,6 +80,7 @@ def _interpret_args(argv):
         if feature_args:
             for key, value in feature_args.items():
                 if isinstance(value, Namespace):
+                    # Vars function returns a dict
                     value = vars(value)
                 arg_parser.add_argument(key, dest=value['dest'], help=value['help'], required=value['required'])
     return arg_parser.parse_args(argv), process_name, process_type, process_config
