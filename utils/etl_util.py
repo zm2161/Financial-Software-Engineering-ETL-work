@@ -1,7 +1,7 @@
 import pandas as pd
-
-import fall2022py.utils.file_util as fileu
-import fall2022py.utils.misc_util as miscu
+import datetime
+import utils.file_util as fileu
+import utils.misc_util as miscu
 
 
 def apply_dtype_feature(df, config):
@@ -17,6 +17,7 @@ def apply_dtype_feature(df, config):
         "CLIENT_TYPE": "int"
     }
     """
+    
     if config and isinstance(config, dict):
         for column_key, type_value in config.items():
             if column_key in df:
@@ -32,10 +33,11 @@ def apply_dtype_feature(df, config):
                 elif type_value is float or type_value == 'float':
                     df[column_key] = df[column_key].fillna(0.0)
                     df[column_key] = df[column_key].astype(float)
-                # TODO: Implement datetime.date type
+                # datetime.date type
+                elif type_value is datetime.date or type_value == 'date':
+                    df[column_key] = df[column_key].astype('datetime64[ns]')
             else:
                 raise KeyError(f'Column <{column_key}> is missing from given dataframe')
-
         # Limit dataframe to specified columns.
         df = df[list(config.keys())]
     return df
@@ -48,12 +50,11 @@ def mapping_feature(df, config):
     :param config: dict; Provided feature configuration
     :return: df_target: pd.DataFrame; Resulted dataframe
     """
+    
     df_mapping = read_feature(config['read'])
-    df_target = pd.merge(df, df_mapping, how='left', left_index=True,
+    df_target = pd.merge(df, df_mapping, how='left', 
                          left_on=miscu.eval_elem_mapping(config, 'left_on'),
-                         right_on=miscu.eval_elem_mapping(config, 'right_on'))
-    df_target.drop(columns=miscu.eval_elem_mapping(config, 'right_on'), inplace=True)
-
+                         right_on=miscu.eval_elem_mapping(config, 'right_on'))                    
     return df_target
 
 
@@ -69,14 +70,33 @@ def read_feature(config):
                            file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
                            separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
                            skip_rows=miscu.eval_elem_mapping(config, 'skip_rows', default_value=0),
-                           use_cols=miscu.eval_elem_mapping(config, 'use_cols'),
+                           use_cols=miscu.eval_elem_mapping(config, 'use_cols', default_value=None),
                            sheet_name=miscu.eval_elem_mapping(config, 'sheet_name', default_value=0))
-
+    
     df_target.columns = df_target.columns.str.strip()
-
     # Call apply_dtype_feature, if appropriate config section exists
     apply_dtype_config = miscu.eval_elem_mapping(config, 'apply_dtype')
     if apply_dtype_config:
         df_target = apply_dtype_feature(df_target, apply_dtype_config)
-
     return df_target
+
+
+def write_feature(config,df_target):
+    """
+    ETL feature to write a file, based on provided ETL configuration section
+    :param config: dict; Provided configuration mapping
+    :return: None
+    """
+    print(miscu.eval_elem_mapping(config, 'path'))
+    path = fileu.write(description=miscu.eval_elem_mapping(config, 'description'),
+                           df=df_target,
+                           rename_col=miscu.eval_elem_mapping(config, 'col_rename', default_value={}),
+                           path=miscu.eval_elem_mapping(config, 'path'),
+                           columns_wt=miscu.eval_elem_mapping(config, 'columns', default_value=list(df_target.columns)),
+                           file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
+                           separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
+                           mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
+                           header=miscu.eval_elem_mapping(config, 'header', default_value=True))
+
+
+    return path
