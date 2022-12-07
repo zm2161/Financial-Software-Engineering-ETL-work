@@ -17,50 +17,54 @@
         }
     },
     "extraction": {
-        "description": "Serge Feldman",
+        "description": "Zhuoran Ma",
         "input": {
             "read": {
                 "file_type": "csv",
-                "separator": "|",
+                "separator": ",",
                 "apply_dtype": {
-                    "INS_CODE": "str",
-                    "INS_OPTION_MNEMO": "str",
-                    "SERVICE_PROVIDED": "str",
-                    "EOY_AMT": "float",
-                    "CLIENT_TYPE": "str"
+                    "Date": "date",
+                    "Open": "float",
+                    "High": "float",
+                    "Low": "float",
+                    "Close": "float",
+                    "Volume": "float",
+                    "Adj Close": "float"
                 }
             },
             "plugin": null
         },
         "mapping": {
             "read": {
-                "file_type": "excel",
+                "file_type": "csv",
                 "skip_rows": 0,
-                "use_cols": "A,B",
+                
                 "sheet_name": 0,
                 "apply_dtype": {
-                    "INS": "str",
-                    "INS_ACCOUNT": "str"
+                    "Date": "date",
+                    "Top1": "str",
+                    "Top2": "str",
+                    "Top3": "str",
+                    "Top4": "str",
+                    "Top5": "str"
                 }
             },
             "left_on": [
-                "INS_CODE"
+                "Date"
             ],
             "right_on": [
-                "INS"
+                "Date"
             ],
             "plugin": null
         },
         "output": {
-            "col_rename": {
-                "EOY_AMT": "AMOUNT",
-                "INS_OPTION_MNEMO": "EXT_ACCOUNT",
-                "INS_ACCOUNT": "MAP_ACCOUNT"
-            },
-            "assign_static": {
-                "CURRENCY": "USD",
-                "ACCOUNT": "SFELDMAN"
-            },
+            "write": {
+                "file_type": "csv",
+                "mode": "new",
+                "col_rename": {
+                    "Adj Close": "Adj_Close"
+                }
+            },            
             "plugin": null
         }
     }

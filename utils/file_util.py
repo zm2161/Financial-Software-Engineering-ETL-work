@@ -50,27 +50,27 @@ def path_new_mode(path):
     return new_path
 
 
-def write(description, df, path, columns,file_type='excel', separator=',', mode='new', header=True):
+def write(description, df, rename_col, path, columns_wt, file_type='excel', separator=',', mode='new', header=True):
     """
     Write file, along with validating provided path.
     :param description: str; File description
     :param df: pd.DataFrame; content to write from
+    :param rename_col: dict; rename columns dictionary
     :param path: str; Fully qualified file name to write
+    :param columns_wt: list, default=df.columns; Columns to write
     :param file_type: str, default='Excel'; Read type with possible values of 'csv' or 'excel'
     :param separator: str, default=','; Values separator
     :param mode: str, default='new'; Overwrite or add new name
-    :param columns: list, default=df.columns; Columns to write
     :param header: bool, default=True; Whether to write out column names
     :return: str; Resulted file path
     """
-    
+    df = df.rename(columns = rename_col)
     if os.path.dirname(path) == '':
         path = './' + path
     # Check whether the path of directory is valid
     if validate_path(os.path.dirname(path),True):
         #Write to csv
         if file_type.lower() == 'csv':
-            
             path = os.path.splitext(path)[0]+'.csv'
             # create a new path if it overwrites exisiting path
             if mode == 'new':
@@ -80,7 +80,8 @@ def write(description, df, path, columns,file_type='excel', separator=',', mode=
             else:
                 logging.error(f'Invalid second input')
                 raise ValueError(f'Second paramenter should be new or overwrite')
-            df.to_csv(path, sep=separator, columns=columns, header=header)
+            df.to_csv(path, columns=columns_wt, sep=separator, header=header)
+            
         #Write to excel
         elif file_type.lower() == 'excel':
             path = os.path.splitext(path)[0]+'.xlsx'
@@ -91,7 +92,7 @@ def write(description, df, path, columns,file_type='excel', separator=',', mode=
             else:
                 logging.error(f'Invalid second input')
                 raise ValueError(f'Second paramenter should be new or overwrite')
-            df.to_excel(path, columns=columns, header=header)
+            df.to_excel(path,columns=columns_wt,  header=header)
 
     logging.info(f'{description} records <{len(df.index)}> were write to <{path}>')
     return path
@@ -126,8 +127,8 @@ if __name__ == '__main__':
     logging.basicConfig(filename=std_filename, level=logging.INFO, filemode='a', format='%(asctime)s - %(message)s')
     df=pd.DataFrame(data={'col1': [1, 2], 'col2': [3, 4]})
     file_path=os.path.join(os.path.dirname(os.path.abspath('file_util.py')), "opendata.log")
-    print(write('', df, 'X.xlsx', columns=df.columns, file_type='excel', separator=',', mode='new', header=True))
-    print(write('', df, 'X.xlsx', columns=df.columns, file_type='excel', separator=',', mode='overwrite',header=True))
-    print(write('', df, 'X.xlsx', columns=df.columns, file_type='csv', separator=',', mode='new', header=True))
-    print(write('', df, 'X.xlsx', columns=df.columns, file_type='csv', separator=',', mode='overwrite',header=True))
-
+    # print(write('', df, 'X.xlsx', columns=df.columns, file_type='excel', separator=',', mode='new', header=True))
+    # print(write('', df, 'X.xlsx', columns=df.columns, file_type='excel', separator=',', mode='overwrite',header=True))
+    # print(write('', df, 'X.xlsx', columns=df.columns, file_type='csv', separator=',', mode='new', header=True))
+    # print(write('', df, 'X.xlsx', columns=df.columns, file_type='csv', separator=',', mode='overwrite',header=True))
+    print(read('', '/Users/zhuoranma/Downloads/fall2022py/data/sergefeldman_extraction_mapping.csv', file_type='csv', separator=',', skip_rows=0, use_cols=None, sheet_name=0))
