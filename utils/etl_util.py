@@ -81,22 +81,21 @@ def read_feature(config):
     return df_target
 
 
-def write_feature(config,df_target):
+def write_feature(config, df_target):
     """
     ETL feature to write a file, based on provided ETL configuration section
     :param config: dict; Provided configuration mapping
-    :return: None
+    :param df_target : pd.DataFrame; dataframe to write from
+    :return: path
     """
-    print(miscu.eval_elem_mapping(config, 'path'))
     path = fileu.write(description=miscu.eval_elem_mapping(config, 'description'),
-                           df=df_target,
-                           rename_col=miscu.eval_elem_mapping(config, 'col_rename', default_value={}),
-                           path=miscu.eval_elem_mapping(config, 'path'),
-                           columns_wt=miscu.eval_elem_mapping(config, 'columns', default_value=list(df_target.columns)),
-                           file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
-                           separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
-                           mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
-                           header=miscu.eval_elem_mapping(config, 'header', default_value=True))
-
-
+                       df=df_target,
+                       rename_col=miscu.eval_elem_mapping(config, 'col_rename', default_value={}),
+                       path=miscu.eval_elem_mapping(config, 'path'),
+                       columns_wt=miscu.eval_elem_mapping(config, 'columns', default_value=list(df_target.columns)),
+                       file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
+                       separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
+                       mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
+                       header=miscu.eval_elem_mapping(config, 'header', default_value=True))
+    print(path)
     return path

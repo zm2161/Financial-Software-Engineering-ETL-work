@@ -117,6 +117,7 @@ def run_extraction(args, config):
     mapping_read_config = miscu.eval_update_mapping(mapping_config, 'read', mapping_update_with)
     # Run mapping ETL feature.
     df_target = etlu.mapping_feature(df_target, mapping_config)
+    
     # --------------------------------
     # Output section
     # --------------------------------
