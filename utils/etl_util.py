@@ -35,7 +35,7 @@ def apply_dtype_feature(df, config):
                     df[column_key] = df[column_key].astype(float)
                 # datetime.date type
                 elif type_value is datetime.date or type_value == 'date':
-                    df[column_key] = df[column_key].astype('datetime64[ns]')
+                    df[column_key] = pd.to_datetime(df[column_key], format="%d/%m/%Y")
             else:
                 raise KeyError(f'Column <{column_key}> is missing from given dataframe')
         # Limit dataframe to specified columns.
@@ -64,14 +64,14 @@ def read_feature(config):
     This is a composite feature, since it can call apply_dtype_feature, if appropriate config section exists
     :param config: dict; Provided configuration mapping
     :return: pd.DataFrame; Resulted dataframe
-    """
-    df_target = fileu.read(description=miscu.eval_elem_mapping(config, 'description'),
-                           path=miscu.eval_elem_mapping(config, 'path'),
-                           file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
-                           separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
-                           skip_rows=miscu.eval_elem_mapping(config, 'skip_rows', default_value=0),
-                           use_cols=miscu.eval_elem_mapping(config, 'use_cols', default_value=None),
-                           sheet_name=miscu.eval_elem_mapping(config, 'sheet_name', default_value=0))
+    """   
+    FileData = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
+    df_target = FileData.read(path=miscu.eval_elem_mapping(config, 'path'),
+                              file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
+                              separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
+                              skip_rows=miscu.eval_elem_mapping(config, 'skip_rows', default_value=0),
+                              use_cols=miscu.eval_elem_mapping(config, 'use_cols', default_value=None),
+                              sheet_name=miscu.eval_elem_mapping(config, 'sheet_name', default_value=0))
     
     df_target.columns = df_target.columns.str.strip()
     # Call apply_dtype_feature, if appropriate config section exists
@@ -88,14 +88,13 @@ def write_feature(config, df_target):
     :param df_target : pd.DataFrame; dataframe to write from
     :return: path
     """
-    path = fileu.write(description=miscu.eval_elem_mapping(config, 'description'),
-                       df=df_target,
-                       rename_col=miscu.eval_elem_mapping(config, 'col_rename', default_value={}),
-                       path=miscu.eval_elem_mapping(config, 'path'),
-                       columns_wt=miscu.eval_elem_mapping(config, 'columns', default_value=list(df_target.columns)),
-                       file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
-                       separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
-                       mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
-                       header=miscu.eval_elem_mapping(config, 'header', default_value=True))
-    print(path)
+    df_target = df_target.rename(columns=miscu.eval_elem_mapping(config, 'col_rename', default_value={}))
+    FileData = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
+    path = FileData.write(df=df_target,
+                          path=miscu.eval_elem_mapping(config, 'path'),
+                          columns_wt=miscu.eval_elem_mapping(config, 'columns', default_value=list(df_target.columns)),
+                          file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='excel'),
+                          separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
+                          mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
+                          header=miscu.eval_elem_mapping(config, 'header', default_value=True))
     return path

@@ -23,37 +23,33 @@
                 "file_type": "csv",
                 "separator": ",",
                 "apply_dtype": {
+                    "Store": "int",
+                    "Dept": "int",
                     "Date": "date",
-                    "Open": "float",
-                    "High": "float",
-                    "Low": "float",
-                    "Close": "float",
-                    "Volume": "float",
-                    "Adj Close": "float"
+                    "Weekly_Sales": "float",
+                    "IsHoliday": "bool"
+                    
                 }
             },
             "plugin": null
         },
         "mapping": {
             "read": {
-                "file_type": "csv",
+                "file_type": "excel",
                 "skip_rows": 0,
                 
                 "sheet_name": 0,
                 "apply_dtype": {
-                    "Date": "date",
-                    "Top1": "str",
-                    "Top2": "str",
-                    "Top3": "str",
-                    "Top4": "str",
-                    "Top5": "str"
+                    "Store": "int",
+                    "Type": "str",
+                    "Size": "int" 
                 }
             },
             "left_on": [
-                "Date"
+                "Store"
             ],
             "right_on": [
-                "Date"
+                "Store"
             ],
             "plugin": null
         },
@@ -62,9 +58,10 @@
                 "file_type": "csv",
                 "mode": "new",
                 "col_rename": {
-                    "Adj Close": "Adj_Close"
+                    "Weekly_Sales": "Sales"
                 }
-            },            
+            },  
+                     
             "plugin": null
         }
     }
