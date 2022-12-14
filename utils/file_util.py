@@ -1,23 +1,10 @@
 import logging
 import pandas as pd
 import os
-from abc import ABC, abstractmethod
+import utils.datastorage as ds
 
 
-class DataStorage(ABC):
-    def __init__(self, description):
-        self._description = description
-
-    @abstractmethod
-    def read(self, config):
-        pass
-
-    @abstractmethod
-    def write(self, config):
-        pass 
-
-
-class FileDataStorage(DataStorage):
+class FileDataStorage(ds.DataStorage):
     def __init__(self, description):
         super().__init__(description)
 
@@ -61,7 +48,6 @@ class FileDataStorage(DataStorage):
         :return: str; Resulted file path
         """
         
-        print(df.columns)
         if os.path.dirname(path) == '':
             path = './' + path
         # Check whether the path of directory is valid

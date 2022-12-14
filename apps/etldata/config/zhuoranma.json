@@ -59,6 +59,11 @@
                 "mode": "new",
                 "col_rename": {
                     "Weekly_Sales": "Sales"
+                },
+                "col_reorder":["Store","Dept","Date","IsHoliday","Type","Size","Sales"],
+                "assign_static": {
+                    "CURRENCY": "USD",
+                    "ACCOUNT": "Zhuoran"
                 }
             },  
                      
