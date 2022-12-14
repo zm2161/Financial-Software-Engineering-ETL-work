@@ -88,7 +88,13 @@ def write_feature(config, df_target):
     :param df_target : pd.DataFrame; dataframe to write from
     :return: path
     """
-    df_target = df_target.rename(columns=miscu.eval_elem_mapping(config, 'col_rename', default_value={}))
+    
+    # Rename and reorder columns
+    df_target = rearrange_feature(df_target, config)
+    # Add static columns
+    col_static = miscu.eval_elem_mapping(config, 'assign_static', default_value={})
+    for k,v in col_static.items():
+        df_target[k] = v
     FileData = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
     path = FileData.write(df=df_target,
                           path=miscu.eval_elem_mapping(config, 'path'),
@@ -98,3 +104,20 @@ def write_feature(config, df_target):
                           mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
                           header=miscu.eval_elem_mapping(config, 'header', default_value=True))
     return path
+
+
+def rearrange_feature(df, config):
+    """
+    ETL feature to rename and reorder columns of given dataframe.
+    :param df: pd.DataFrame; Provided dataframe
+    :param config: dict; Provided feature configuration
+    :return: df_target: pd.DataFrame; Resulted dataframe
+    """
+    # Rename columns
+    df_target = df.rename(columns=miscu.eval_elem_mapping(config, 'col_rename', default_value={}))
+    # Reorder
+    reorder = miscu.eval_elem_mapping(config, 'col_reorder', default_value=df.columns)
+    if not all(x in df_target.columns for x in reorder):
+        raise KeyError(f'Column <{reorder}> is not a subset of given dataframe')
+    df_target = df_target[reorder]
+    return df_target

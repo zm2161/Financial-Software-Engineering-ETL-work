@@ -131,7 +131,7 @@ def run_extraction(args, config):
     output_config = miscu.eval_elem_mapping(config, 'output')
     output_write_config = miscu.eval_update_mapping(output_config, 'write', output_update_with)
     # Run write ETL feature.
-    print(etlu.write_feature(output_write_config, df_target))
+    etlu.write_feature(output_write_config, df_target)
     return df_target
 
 
