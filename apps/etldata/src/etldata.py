@@ -6,8 +6,10 @@ import sys
 from types import SimpleNamespace as Namespace
 # Add the directory of parent of file to sys path
 sys.path.append(os.path.abspath('../../../'))
+from utils.log_trace_util import log_trace_decorator
 import utils.etl_util as etlu
 import utils.misc_util as miscu
+
 
 
 RETURN_SUCCESS = 0
@@ -20,9 +22,15 @@ def main(argv):
         # Parse command line arguments.
         args, process_name, process_type, process_config = _interpret_args(argv)
 
-        # Initialize standard logging \ destination file handlers.
-        std_filename = os.path.join('../', "opendata.log")
-        logging.basicConfig(filename=std_filename, filemode='a', format='%(asctime)s - %(message)s')
+        # Create real path of log_path.
+        std_filename = "opendata.log"
+        logging_dir = os.path.realpath(f'{args.log_path}')
+        if not os.path.exists(logging_dir):
+            os.makedirs(logging_dir)
+        # Change defalut logging level so only events of this level and above will be logged
+        logging.basicConfig(filename=os.path.join(logging_dir, std_filename), filemode='a',
+                            format='%(asctime)s - %(message)s', level=logging.INFO
+                            )
         logging.info('')
         logging.info(f'Entering {APP}')
 
@@ -85,7 +93,7 @@ def _interpret_args(argv):
                 arg_parser.add_argument(key, dest=value['dest'], help=value['help'], required=value['required'])
     return arg_parser.parse_args(argv), process_name, process_type, process_config
 
-
+@log_trace_decorator
 def run_extraction(args, config):
 
     # --------------------------------
@@ -134,7 +142,7 @@ def run_extraction(args, config):
     etlu.write_feature(output_write_config, df_target)
     return df_target
 
-
+@log_trace_decorator
 def run_transformation(args, conf):
     pass
 

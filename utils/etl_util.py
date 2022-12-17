@@ -2,8 +2,10 @@ import pandas as pd
 import datetime
 import utils.file_util as fileu
 import utils.misc_util as miscu
+from utils.log_trace_util import log_trace_decorator
+import logging
 
-
+@log_trace_decorator
 def apply_dtype_feature(df, config):
     """
     ETL feature to apply data types to dataframe columns and limit columns to ones specified
@@ -42,7 +44,7 @@ def apply_dtype_feature(df, config):
         df = df[list(config.keys())]
     return df
 
-
+@log_trace_decorator
 def mapping_feature(df, config):
     """
     ETL feature to merge given dataframe with extracted mapping dataframe
@@ -57,7 +59,7 @@ def mapping_feature(df, config):
                          right_on=miscu.eval_elem_mapping(config, 'right_on'))                    
     return df_target
 
-
+@log_trace_decorator
 def read_feature(config):
     """
     ETL feature to read a file, based on provided ETL configuration section
@@ -80,7 +82,7 @@ def read_feature(config):
         df_target = apply_dtype_feature(df_target, apply_dtype_config)
     return df_target
 
-
+@log_trace_decorator
 def write_feature(config, df_target):
     """
     ETL feature to write a file, based on provided ETL configuration section
@@ -105,7 +107,7 @@ def write_feature(config, df_target):
                           header=miscu.eval_elem_mapping(config, 'header', default_value=True))
     return path
 
-
+@log_trace_decorator
 def rearrange_feature(df, config):
     """
     ETL feature to rename and reorder columns of given dataframe.
