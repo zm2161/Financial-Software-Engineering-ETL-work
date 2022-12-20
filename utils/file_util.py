@@ -38,7 +38,7 @@ class FileDataStorage(ds.DataStorage):
         return df_target
 
     @log_trace_decorator
-    def write(self, df, path, columns_wt, file_type='excel', separator=',', mode='new', header=True):
+    def write(self, df, path, columns_wt=None, file_type='csv', separator=',', mode='new', header=True):
         """
         Write file, along with validating provided path.
         :param df: pd.DataFrame; content to write from
@@ -53,6 +53,8 @@ class FileDataStorage(ds.DataStorage):
         
         if os.path.dirname(path) == '':
             path = './' + path
+        if columns_wt is None:
+            columns_wt = df.columns
         # Check whether the path of directory is valid
         if self.validate_path(os.path.dirname(path), True):
             # Write to csv
@@ -82,7 +84,7 @@ class FileDataStorage(ds.DataStorage):
 
         logging.info(f'{self._description} records <{len(df.index)}> were write to <{path}>')
         return path
-#remove it from staticmethod works
+
     @staticmethod
     @log_trace_decorator
     def validate_path(path, is_dir):
@@ -106,6 +108,7 @@ class FileDataStorage(ds.DataStorage):
             logging.error(f'Invalid second input')
             raise ValueError(f'Second paramenter should be True for directory and False for File')
         return True
+
     @staticmethod
     @log_trace_decorator
     def path_new_mode(path):

@@ -20,6 +20,7 @@ APP = 'EtlData utility'
 def main(argv):
     try:
         # Parse command line arguments.
+        # Args are command line arguments
         args, process_name, process_type, process_config = _interpret_args(argv)
 
         # Create real path of log_path.
@@ -82,7 +83,8 @@ def _interpret_args(argv):
             process_config = vars(mapping_config.extraction)
         elif process_type == 'transformation':
             process_config = vars(mapping_config.transformation)
-        #feature_args add args from json
+        # Feature_args are dictionary of info in command line
+        # Feature_args add arguments from json like input, output,mapping path to instruct terminal inputs
         feature_args = vars(mapping_config.feature_args)
         # Add necessary arguments to <arg_parser> instance, using static JSON-based configuration.
         if feature_args:
@@ -135,7 +137,7 @@ def run_extraction(args, config):
     # Prepare additional mapping parameters and update appropriate configuration section.
     # Inject 'path' and 'description' into <output> config section.
     # Run write ETL feature.
-    output_update_with = {'path': miscu.eval_elem_mapping(args, 'output_path'), 'description': config['description']}
+    output_update_with = {'output_path': miscu.eval_elem_mapping(args, 'output_path'), 'description': config['description']}
     output_config = miscu.eval_elem_mapping(config, 'output')
     output_write_config = miscu.eval_update_mapping(output_config, 'write', output_update_with)
     # Run write ETL feature.
@@ -143,8 +145,52 @@ def run_extraction(args, config):
     return df_target
 
 @log_trace_decorator
-def run_transformation(args, conf):
-    pass
+def run_transformation(args, config):
+    # --------------------------------
+    # Input section
+    # --------------------------------
+
+    # Prepare additional input parameters and update appropriate configuration section.
+    # Inject 'path' and 'description' into <input> config section.
+    # Args are command input
+    input_update_with = {'path': miscu.eval_elem_mapping(args, 'input_path'), 'description': config['description']}
+    input_config = miscu.eval_elem_mapping(config, 'input')
+    # First create read dic in input key in config, then update with path and description
+    input_read_config = miscu.eval_update_mapping(input_config, "read", input_update_with)
+
+    # Run read ETL feature.
+    df_target = etlu.read_feature(input_read_config)
+    # Engage plugin from <input> config section, if available.
+    input_plugin = miscu.eval_elem_mapping(input_config, "plugin")
+    if input_plugin:
+        df_target = input_plugin(df_target)
+
+    # --------------------------------
+    # Transformation section
+    # --------------------------------
+
+    # Prepare additional mapping parameters and update appropriate configuration section.
+    # Inject 'path' and 'description' into <aggregate> config section.
+    trans_update_with = {'description': config['description']}
+    trans_config = miscu.eval_elem_mapping(config, 'aggregate')
+    trans_write_config = miscu.eval_update_mapping(trans_config, 'agg', trans_update_with)
+    # Run write ETL feature.
+    df_target = etlu.aggregate_feature(trans_write_config, df_target)
+    # --------------------------------
+    # Output section
+    # --------------------------------
+
+    # Implement and complete this section with the following steps:
+    # Prepare additional mapping parameters and update appropriate configuration section.
+    # Inject 'path' and 'description' into <output> config section.
+    # Run write ETL feature.
+    output_update_with = {'path': miscu.eval_elem_mapping(args, 'output_path'), 'description': config['description']}
+    output_config = miscu.eval_elem_mapping(config, 'output')
+    output_write_config = miscu.eval_update_mapping(output_config, 'write', output_update_with)
+    # Run write ETL feature.
+    etlu.write_feature(output_write_config, df_target)
+    
+    return
 
 
 if __name__ == '__main__':

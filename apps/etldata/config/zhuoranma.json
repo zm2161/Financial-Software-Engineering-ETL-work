@@ -69,5 +69,45 @@
                      
             "plugin": null
         }
+    },
+    "transformation":{
+        "description": "Zhuoran Ma",  
+        "input": {
+            "read": {
+                "file_type": "csv",
+                "separator": ","
+                
+            },
+            "plugin": null
+        },      
+        "aggregate": {
+            "agg":{
+                "type": "pivot",
+                "aggfunc": "np.mean",
+                "group_by": ["Store","Dept","Type"],
+                "agg_column": "Sales",
+                "values": [
+                    "Mean_Sales"
+                ],
+                "index": [
+                    "Store"
+                ],
+                "columns": [
+                    "Dept"
+                ]
+            }
+        },
+        "output": {
+            "write": {
+                "file_type": "csv",
+                "mode": "new",
+                "col_rename": {
+                    "Sales": "Mean_Sales"
+                }
+            },  
+                     
+            "plugin": null
+        } 
+         
     }
 }
