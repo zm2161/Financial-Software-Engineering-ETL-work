@@ -162,8 +162,7 @@ def aggregate_feature(config, df_target):
         df_target = df_target.groupby(by=miscu.eval_elem_mapping(config, 'group_by', default_value=None),
                                       as_index=False)[[col]].agg(func_list)
         df_target.columns = ['_'.join(col).strip() for col in df_target.columns.values]   
-        plot_x = miscu.eval_elem_mapping(config, 'plot_x', default_value=None)
-
+        
                       
     else:
         raise ValueError(f'type should be pivot or groupby')     
