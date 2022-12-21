@@ -83,8 +83,8 @@
         "aggregate": {
             "agg":{
                 "type": "groupby",
-                "aggfunc": ["np.mean"],
-                "group_by": ["Store","Dept","Type"],
+                "aggfunc": ["np.mean","np.median"],
+                "group_by": ["Dept"],
                 "agg_column": "Sales",
                 "values": [
                     "Mean_Sales"
@@ -94,7 +94,9 @@
                 ],
                 "columns": [
                     "Dept"
-                ]
+                ],
+                "plot_x" :"Dept"
+                
             }
         },
         "output": {

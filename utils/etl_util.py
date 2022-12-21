@@ -6,6 +6,8 @@ from utils.log_trace_util import log_trace_decorator
 import numpy as np
 import logging
 
+
+
 @log_trace_decorator
 def apply_dtype_feature(df, config):
     """
@@ -124,6 +126,7 @@ def rearrange_feature(df, config):
         if v in df.columns:
             del col_rename[k]
     df_target = df.rename(columns=col_rename)
+
     # Reorder
     reorder = miscu.eval_elem_mapping(config, 'col_reorder', default_value=list(df_target.columns))
     if not all(x in df_target.columns for x in reorder):
@@ -151,13 +154,17 @@ def aggregate_feature(config, df_target):
         df_target.columns = df_target.columns.get_level_values(1)
         # Change column names
         df_target.columns = [f"Dept_{i}" for i in df_target.columns]
-        print(df_target.columns)
+
     elif type == "groupby":
         col = miscu.eval_elem_mapping(config, 'agg_column', default_value=None)
-        func = miscu.eval_elem_mapping(config, 'aggfunc', default_value=None)
+        funcs = miscu.eval_elem_mapping(config, 'aggfunc', default_value=None)
+        func_list = list(map(eval, funcs))
         df_target = df_target.groupby(by=miscu.eval_elem_mapping(config, 'group_by', default_value=None),
-                                      as_index=False)[[col]].apply(lambda x: eval(func+"(x)"))
-                             
+                                      as_index=False)[[col]].agg(func_list)
+        df_target.columns = ['_'.join(col).strip() for col in df_target.columns.values]   
+        plot_x = miscu.eval_elem_mapping(config, 'plot_x', default_value=None)
+
+                      
     else:
         raise ValueError(f'type should be pivot or groupby')     
                            
