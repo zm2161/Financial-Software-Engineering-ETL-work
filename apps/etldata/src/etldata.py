@@ -137,7 +137,8 @@ def run_extraction(args, config):
     # Prepare additional mapping parameters and update appropriate configuration section.
     # Inject 'path' and 'description' into <output> config section.
     # Run write ETL feature.
-    output_update_with = {'output_path': miscu.eval_elem_mapping(args, 'output_path'), 'description': config['description']}
+    output_update_with = {'output_path': miscu.eval_elem_mapping(args, 'output_path'),
+                          'description': config['description']}
     output_config = miscu.eval_elem_mapping(config, 'output')
     output_write_config = miscu.eval_update_mapping(output_config, 'write', output_update_with)
     # Run write ETL feature.
