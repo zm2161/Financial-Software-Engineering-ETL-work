@@ -50,7 +50,6 @@ class FileDataStorage(ds.DataStorage):
         :param header: bool, default=True; Whether to write out column names
         :return: str; Resulted file path
         """
-        
         if os.path.dirname(path) == '':
             path = './' + path
         if columns_wt is None:

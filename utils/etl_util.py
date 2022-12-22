@@ -165,6 +165,6 @@ def aggregate_feature(config, df_target):
         
                       
     else:
-        raise ValueError(f'type should be pivot or groupby')     
+        raise KeyError(f'type should be pivot or groupby')     
                            
     return df_target

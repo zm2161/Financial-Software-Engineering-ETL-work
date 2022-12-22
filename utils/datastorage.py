@@ -4,6 +4,8 @@ class DataStorage(ABC):
     """
     Abstract Class with read and write property of files
     Detailed implementation is in file_util
+    It can be used to read and write any files
+    It has attribute description describing any inherited class
     """
     def __init__(self, description):
         self._description = description
@@ -11,14 +13,17 @@ class DataStorage(ABC):
     @property
     def description(self):
         """
-        property decorator for descripiton
+        Property decorator for descripiton
+        Property decorator makes it easier for others to change the attribute
+        So each inherited class has a new description
         """
         return self._description
     
     @description.setter
     def description(self,description):
         """
-        setter decorator for description
+        Setter decorator for description
+        It is used to set the value of attribute of description
         """
         self._description = description
 

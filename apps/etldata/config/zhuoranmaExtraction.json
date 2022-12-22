@@ -1,0 +1,73 @@
+{
+    "feature_args": {
+        "-input": {
+            "dest": "input_path",
+            "help": "Input data path",
+            "required": "True"
+        },
+        "-output": {
+            "dest": "output_path",
+            "help": "Output data path",
+            "required": "True"
+        },
+        "-mapping": {
+            "dest": "mapping_path",
+            "help": "Mapping data path",
+            "required": "True"
+        }
+    },
+    "extraction": {
+        "description": "Zhuoran Ma",
+        "input": {
+            "read": {
+                "file_type": "csv",
+                "separator": ",",
+                "apply_dtype": {
+                    "Store": "int",
+                    "Dept": "int",
+                    "Date": "date",
+                    "Weekly_Sales": "float",
+                    "IsHoliday": "bool"
+                    
+                }
+            },
+            "plugin": null
+        },
+        "mapping": {
+            "read": {
+                "file_type": "excel",
+                "skip_rows": 0,
+                
+                "sheet_name": 0,
+                "apply_dtype": {
+                    "Store": "int",
+                    "Type": "str",
+                    "Size": "int" 
+                }
+            },
+            "left_on": [
+                "Store"
+            ],
+            "right_on": [
+                "Store"
+            ],
+            "plugin": null
+        },
+        "output": {
+            "write": {
+                "file_type": "csv",
+                "mode": "new",
+                "col_rename": {
+                    "Weekly_Sales": "Sales"
+                },
+                "col_reorder":["Store","Dept","Date","IsHoliday","Type","Size","Sales"],
+                "assign_static": {
+                    "CURRENCY": "USD",
+                    "ACCOUNT": "Zhuoran"
+                }
+            },  
+                     
+            "plugin": null
+        }
+    }
+}

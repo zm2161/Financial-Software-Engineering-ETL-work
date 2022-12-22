@@ -24,7 +24,7 @@ def main(argv):
         args, process_name, process_type, process_config = _interpret_args(argv)
 
         # Create real path of log_path.
-        std_filename = "opendata.log"
+        std_filename = "etldata.log"
         logging_dir = os.path.realpath(f'{args.log_path}')
         if not os.path.exists(logging_dir):
             os.makedirs(logging_dir)
@@ -137,7 +137,7 @@ def run_extraction(args, config):
     # Prepare additional mapping parameters and update appropriate configuration section.
     # Inject 'path' and 'description' into <output> config section.
     # Run write ETL feature.
-    output_update_with = {'output_path': miscu.eval_elem_mapping(args, 'output_path'),
+    output_update_with = {'path': miscu.eval_elem_mapping(args, 'output_path'),
                           'description': config['description']}
     output_config = miscu.eval_elem_mapping(config, 'output')
     output_write_config = miscu.eval_update_mapping(output_config, 'write', output_update_with)
