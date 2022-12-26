@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 
+
 class DataStorage(ABC):
     """
     Abstract Class with read and write property of files
-    Detailed implementation is in file_util
-    It can be used to read and write any files
-    It has attribute description describing any inherited class
+    More implementation will be in child class like file_util
+    DataStorage can be used to read and write any files
+    DataStorage has attribute description describing any inherited class
     """
     def __init__(self, description):
         self._description = description
@@ -29,8 +30,14 @@ class DataStorage(ABC):
 
     @abstractmethod
     def read(self, *args, **kwargs):
+        """
+        Abstract method that reads data, which will be overriden in inherited class
+        """
         pass
 
     @abstractmethod
     def write(self, *args, **kwargs):
+        """
+        Abstract method that writes data, which will be overriden in inherited class
+        """
         pass 

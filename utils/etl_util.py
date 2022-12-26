@@ -3,9 +3,7 @@ import datetime
 import utils.file_util as fileu
 import utils.misc_util as miscu
 from utils.log_trace_util import log_trace_decorator
-import numpy as np
 import logging
-
 
 
 @log_trace_decorator
@@ -47,6 +45,7 @@ def apply_dtype_feature(df, config):
         df = df[list(config.keys())]
     return df
 
+
 @log_trace_decorator
 def mapping_feature(df, config):
     """
@@ -62,6 +61,7 @@ def mapping_feature(df, config):
                          right_on=miscu.eval_elem_mapping(config, 'right_on'))                    
     return df_target
 
+
 @log_trace_decorator
 def read_feature(config):
     """
@@ -70,8 +70,8 @@ def read_feature(config):
     :param config: dict; Provided configuration mapping
     :return: pd.DataFrame; Resulted dataframe
     """   
-    FileData = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
-    df_target = FileData.read(path=miscu.eval_elem_mapping(config, 'path'),
+    filedata = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
+    df_target = filedata.read(path=miscu.eval_elem_mapping(config, 'path'),
                               file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='csv'),
                               separator=miscu.eval_elem_mapping(config, 'separator', default_value=','),
                               skip_rows=miscu.eval_elem_mapping(config, 'skip_rows', default_value=0),
@@ -101,8 +101,8 @@ def write_feature(config, df_target):
     col_static = miscu.eval_elem_mapping(config, 'assign_static', default_value={})
     for k,v in col_static.items():
         df_target[k] = v
-    FileData = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
-    path = FileData.write(df=df_target,
+    filedata = fileu.FileDataStorage(miscu.eval_elem_mapping(config, 'description'))
+    path = filedata.write(df=df_target,
                           path=miscu.eval_elem_mapping(config, 'path'),
                           columns_wt=miscu.eval_elem_mapping(config, 'columns', default_value=list(df_target.columns)),
                           file_type=miscu.eval_elem_mapping(config, 'file_type', default_value='csv'),
@@ -110,6 +110,7 @@ def write_feature(config, df_target):
                           mode=miscu.eval_elem_mapping(config, 'mode', default_value='new'),
                           header=miscu.eval_elem_mapping(config, 'header', default_value=True))
     return path
+
 
 @log_trace_decorator
 def rearrange_feature(df, config):
@@ -125,7 +126,11 @@ def rearrange_feature(df, config):
     for k, v in col_rename.items():
         if v in df.columns:
             del col_rename[k]
-    df_target = df.rename(columns=col_rename)
+    # Raise exeption if columns renamed is not defined
+    try:
+        df_target = df.rename(columns=col_rename)
+    except KeyError:
+        raise KeyError(f"The <{col_rename}> is not in the dataframe.")
 
     # Reorder
     reorder = miscu.eval_elem_mapping(config, 'col_reorder', default_value=list(df_target.columns))
@@ -134,19 +139,21 @@ def rearrange_feature(df, config):
     df_target = df_target[reorder]
     return df_target
 
+
 @log_trace_decorator
 def aggregate_feature(config, df_target):
     """
-    ETL feature to write a file, based on provided ETL configuration section
+    ETL feature to aggregate, based on provided ETL configuration section
+    Transformation can be either pivot and groupby
     :param config: dict; Provided configuration mapping
     :param df_target : pd.DataFrame; dataframe to write from
-    :return: path
+    :return: df_target: pd.DataFrame; Resulted dataframe
     """
      
     # Aggregation can be pivot or groupby
-    type = miscu.eval_elem_mapping(config, 'type')
+    agg = miscu.eval_elem_mapping(config, 'type')
 
-    if type == "pivot":
+    if agg == "pivot":
         df_target = df_target.pivot(index=miscu.eval_elem_mapping(config, 'index', default_value=None),
                                     columns=miscu.eval_elem_mapping(config, 'columns', default_value=None),
                                     values=miscu.eval_elem_mapping(config, 'values', default_value=None))
@@ -155,16 +162,23 @@ def aggregate_feature(config, df_target):
         # Change column names
         df_target.columns = [f"Dept_{i}" for i in df_target.columns]
 
-    elif type == "groupby":
+    elif agg == "groupby":
         col = miscu.eval_elem_mapping(config, 'agg_column', default_value=None)
         funcs = miscu.eval_elem_mapping(config, 'aggfunc', default_value=None)
-        func_list = list(map(eval, funcs))
+        # Map function applys eval to multiple config functions
+        try:
+            func_list = list(map(eval, funcs))
+        except AttributeError:
+            raise AttributeError(f"The <{funcs}> is not defined.")
+
         df_target = df_target.groupby(by=miscu.eval_elem_mapping(config, 'group_by', default_value=None),
                                       as_index=False)[[col]].agg(func_list)
+        # Combine column names in multiple levels                              
         df_target.columns = ['_'.join(col).strip() for col in df_target.columns.values]   
-        
-                      
+
     else:
-        raise KeyError(f'type should be pivot or groupby')     
+        logging.error(f"The aggregation type: <{agg}> is not defined.")
+        raise AttributeError(f'Type should be pivot or groupby')     
                            
     return df_target
+

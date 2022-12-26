@@ -6,7 +6,16 @@ from utils.log_trace_util import log_trace_decorator
 
 
 class FileDataStorage(ds.DataStorage):
+    """
+    The child class for DataStorage, which reads, writes files specifically excel and xlsx format.
+    Read and write methods take several parameters for read and write functions, e.g. columns to be included
+    FileDataStorage has two staticmethod validate_path and path_new_mode that don't have access to
+    class parameters. These two methods will be used in read and write methods
+    """
     def __init__(self, description):
+        """
+        Inherit constructors to put values in description which will be used in logging
+        """
         super().__init__(description)
 
     @log_trace_decorator
@@ -30,7 +39,8 @@ class FileDataStorage(ds.DataStorage):
             elif file_type.lower() == 'excel':
                 # Read Excel based file.
                 if len((pd.ExcelFile(path)).sheet_names) > 1:
-                    df_target = pd.read_excel(path, sep=separator, skiprows=skip_rows, usecol=use_cols, sheet_name=sheet_name)
+                    df_target = pd.read_excel(path, sep=separator, skiprows=skip_rows, usecol=use_cols,
+                                              sheet_name=sheet_name)
                 else:
                     df_target = pd.read_excel(path, usecols=use_cols)
 

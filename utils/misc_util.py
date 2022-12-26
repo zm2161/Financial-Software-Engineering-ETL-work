@@ -2,6 +2,7 @@ from argparse import Namespace as ArgNamespace
 from types import SimpleNamespace
 from utils.log_trace_util import log_trace_decorator
 
+
 @log_trace_decorator
 def convert_namespace_to_dict(mapping):
     """
@@ -21,6 +22,7 @@ def convert_namespace_to_dict(mapping):
 
     return mapping_target
 
+
 @log_trace_decorator
 def eval_elem_mapping(mapping, key, default_value=None):
     """
@@ -32,6 +34,7 @@ def eval_elem_mapping(mapping, key, default_value=None):
     """
     value_target = mapping[key] if isinstance(mapping, dict) and key in mapping else default_value
     return value_target if value_target else default_value
+
 
 @log_trace_decorator
 def eval_update_mapping(mapping, key, update_with):

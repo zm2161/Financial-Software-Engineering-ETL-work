@@ -10,8 +10,6 @@ from utils.log_trace_util import log_trace_decorator
 import utils.etl_util as etlu
 import utils.misc_util as miscu
 
-
-
 RETURN_SUCCESS = 0
 RETURN_FAILURE = 1
 APP = 'EtlData utility'
@@ -95,6 +93,7 @@ def _interpret_args(argv):
                 arg_parser.add_argument(key, dest=value['dest'], help=value['help'], required=value['required'])
     return arg_parser.parse_args(argv), process_name, process_type, process_config
 
+
 @log_trace_decorator
 def run_extraction(args, config):
 
@@ -144,6 +143,7 @@ def run_extraction(args, config):
     # Run write ETL feature.
     etlu.write_feature(output_write_config, df_target)
     return df_target
+
 
 @log_trace_decorator
 def run_transformation(args, config):
@@ -196,6 +196,5 @@ def run_transformation(args, config):
 
 if __name__ == '__main__':
     # Call main process.
-    # sys.exit(main(sys.argv[1:]))
     main(sys.argv[1:])
     
