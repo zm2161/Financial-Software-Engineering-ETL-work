@@ -132,7 +132,6 @@ def run_extraction(args, config):
     # Output section
     # --------------------------------
 
-    # Implement and complete this section with the following steps:
     # Prepare additional mapping parameters and update appropriate configuration section.
     # Inject 'path' and 'description' into <output> config section.
     # Run write ETL feature.
@@ -181,7 +180,6 @@ def run_transformation(args, config):
     # Output section
     # --------------------------------
 
-    # Implement and complete this section with the following steps:
     # Prepare additional mapping parameters and update appropriate configuration section.
     # Inject 'path' and 'description' into <output> config section.
     # Run write ETL feature.
@@ -190,7 +188,18 @@ def run_transformation(args, config):
     output_write_config = miscu.eval_update_mapping(output_config, 'write', output_update_with)
     # Run write ETL feature.
     etlu.write_feature(output_write_config, df_target)
-    
+    # --------------------------------
+    # Plot section
+    # --------------------------------
+
+    # Prepare additional mapping parameters and update appropriate configuration section.
+    # Inject 'path' and 'description' into <plot> config section.
+    # Run write ETL feature.
+    plot_update_with = {'description': config['description']}
+    plot_config = miscu.eval_elem_mapping(config, 'output')
+    plot_write_config = miscu.eval_update_mapping(plot_config, 'feature', plot_update_with)
+    # Run write ETL feature.
+    etlu.plot_feature(plot_write_config, df_target)
     return
 
 

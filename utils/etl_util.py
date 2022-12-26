@@ -4,7 +4,8 @@ import utils.file_util as fileu
 import utils.misc_util as miscu
 from utils.log_trace_util import log_trace_decorator
 import logging
-
+import numpy as np
+import matplotlib
 
 @log_trace_decorator
 def apply_dtype_feature(df, config):
@@ -166,6 +167,7 @@ def aggregate_feature(config, df_target):
         col = miscu.eval_elem_mapping(config, 'agg_column', default_value=None)
         funcs = miscu.eval_elem_mapping(config, 'aggfunc', default_value=None)
         # Map function applys eval to multiple config functions
+        # Raise exceptions if functions are not defined
         try:
             func_list = list(map(eval, funcs))
         except AttributeError:
@@ -182,3 +184,18 @@ def aggregate_feature(config, df_target):
                            
     return df_target
 
+
+@log_trace_decorator
+def plot_feature(config, df_target):
+    """
+    ETL feature to plot, based on dataframe passed by
+    Plotting specifies x and y features
+    :param config: dict; Provided configuration plot feature
+    :param df_target : pd.DataFrame; dataframe to write from
+    :return: df_target: pd.DataFrame; Resulted dataframe
+    """
+    x = miscu.eval_elem_mapping(config, 'plot_x', default_value=None)
+    y = miscu.eval_elem_mapping(config, 'plot_x', default_value=None)
+    fig = df_target.plot(x,y).get_figure()
+    fig.savefig("sales_mean_median.png")
+    return df_target

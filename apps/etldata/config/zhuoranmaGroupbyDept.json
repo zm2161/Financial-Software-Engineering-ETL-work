@@ -94,8 +94,7 @@
                 ],
                 "columns": [
                     "Dept"
-                ],
-                "plot_x" :"Dept"
+                ]
                 
             }
         },
@@ -106,7 +105,14 @@
             },  
                      
             "plugin": null
-        } 
+        },
+        "plot": {
+            "feature": {
+                "plot_x": "Dept",
+                "plot_y": ["Sales_mean","Sales_median"]
+            }
+
+        }
  
          
     }
